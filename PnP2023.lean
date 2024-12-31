@@ -1,4 +1,3 @@
-import PfsProgs25.Unit00.Egs
 /-!
 # Proofs and Programs 2025
 

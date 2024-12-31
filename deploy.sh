@@ -1,6 +1,5 @@
 set -e
 ./mk_imports.sh
-cat Import_tail.lean >> PnP2023.lean
 lake build
 cd docbuild
 rm -rf .lake/build/doc
