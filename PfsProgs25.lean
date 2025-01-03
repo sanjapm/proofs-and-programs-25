@@ -1,4 +1,5 @@
 import PfsProgs25.Unit00.Egs
+import PfsProgs25.Unit01.SimpleTerms
 /-!
 # Proofs and Programs 2025
 
