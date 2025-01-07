@@ -28,3 +28,31 @@ theorem sumToN_eq (n: Nat) : 2 * sumToN n = n * (n + 1) := by
     unfold sumToN
     rw [left_distrib, ih]
     ring
+
+def sumToN' (n: Nat) : Nat :=
+  if n = 0 then 0 else (sumToN' (n - 1)) + n
+
+#eval sumToN' 10 -- 55
+
+theorem sumToN_eq' (n: Nat) : 2 * sumToN' n = n * (n + 1) := by
+  rw [sumToN']
+  split
+  case isTrue h =>
+    rw [h]
+  case isFalse h =>
+    rw [left_distrib, sumToN_eq']
+    let m := n - 1
+    have h' : n = m + 1 := by
+      show n = n - 1 + 1
+      symm
+      apply Nat.sub_add_cancel
+      exact Nat.pos_iff_ne_zero.mpr h
+    rw [h']
+    simp
+    ring
+
+def sumToN'' (n: Nat) : Nat := Id.run do
+  let mut sum := 0
+  for i in [0:n] do
+    sum := sum + i
+  return sum
