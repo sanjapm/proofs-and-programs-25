@@ -34,25 +34,14 @@ def sumToN' (n: Nat) : Nat :=
 
 #eval sumToN' 10 -- 55
 
-theorem sumToN_eq' (n: Nat) : 2 * sumToN' n = n * (n + 1) := by
-  rw [sumToN']
-  split
-  case isTrue h =>
-    rw [h]
-  case isFalse h =>
-    rw [left_distrib, sumToN_eq']
-    let m := n - 1
-    have h' : n = m + 1 := by
-      show n = n - 1 + 1
-      symm
-      apply Nat.sub_add_cancel
-      exact Nat.pos_iff_ne_zero.mpr h
-    rw [h']
-    simp
-    ring
+#eval (0  - 1) + 1 -- 1
 
-def sumToN'' (n: Nat) : Nat := Id.run do
-  let mut sum := 0
-  for i in [0:n] do
-    sum := sum + i
-  return sum
+/-!
+Lean allows imperative programming, but it is not recommended. Here is an example of a program that uses a mutable variable.
+-/
+def sumToNImperative (n: Nat) : Nat :=
+  Id.run do
+    let mut sum := 0
+    for i in [1:n+1] do
+      sum := sum + i
+    return sum
