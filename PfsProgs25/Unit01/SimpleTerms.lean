@@ -62,6 +62,9 @@ If `α` and `β` are types, then `α → β` is the type of functions from `α` 
 -/
 #check Nat → Nat -- Type
 
+/--
+The cube of a natural number.
+-/
 def cube (n: Nat) : Nat := n * n * n
 
 #check cube -- Nat → Nat
@@ -76,8 +79,15 @@ error: could not synthesize a 'Repr' or 'ToString' instance for type
 #guard_msgs in
 #eval cube
 
+/-
+def cube : Nat → Nat :=
+fun n ↦ n * n * n
+-/
 #print cube
 
+/--
+A generic function to compute the cube of a number. This defines the cube for a type `α` with a multiplication operation.
+-/
 def cubeGeneric {α: Type} [Mul α]
   (n: α) : α := n * n * n
 
@@ -102,13 +112,17 @@ def myMul : Mul Int :=
 
 #eval @cubeGeneric _ myMul  (-2 : Int) -- -6
 
-
+/--
+The cube of a natural number, using a lambda expression.
+-/
 def cube' : Nat → Nat :=
   fun n ↦ n * n * n -- can use `=>` instead of `↦`
 
 #eval cube' 3 -- 27
 
-
+/--
+The cube of a natural number, using a lambda expression with argument type specified.
+-/
 def cube'' := fun (n : Nat) ↦ n * n * n
 #check cube'' -- Nat → Nat
 
@@ -125,19 +139,32 @@ context:
 
 Suppose we want to define the function `f` of two variables `a` and `b` taking value `a + b + 1`. We can define it as a function of one variable `a` returning a function of one variable `b`.
 -/
+
+/--
+The function of two variables `a` and `b` taking value `a * a + b * b`, defined as an iterated lambda.
+-/
 def sum_of_squares : Nat → Nat → Nat :=
   fun a ↦ fun b ↦ a * a + b * b
 
 #eval sum_of_squares 3 4 -- 25
 
+/--
+The function of two variables `a` and `b` taking value `a * a + b * b`, using arguments in a single pair of parentheses.
+-/
 def sum_of_squares' (a b : Nat) : Nat :=
   a * a + b * b
 
 #eval sum_of_squares' 3 4 -- 25
 
+/--
+The function of two variables `a` and `b` taking value `a * a + b * b`, using a lambda expression with two arguments.
+-/
 def sum_of_squares'' : Nat → Nat → Nat :=
   fun a b ↦ a * a + b * b
 
+/--
+The function of two variables `a` and `b` taking value `a * a + b * b`, using a lambda expression with two arguments and type annotations for one. The other type is inferred.
+-/
 def sum_of_squares'''  :=
   fun (a : Nat) b ↦ a * a + b * b
 
@@ -146,11 +173,20 @@ def sum_of_squares'''  :=
 example :=
     fun (a : Nat) (b : Int) ↦ a * a + b * b
 
-#check List
-#check List Nat
-#check Mul
-#check Inhabited
+/-!
+We used typeclasses above. We will discuss them later. For now, note that they are simply types or type families. However, there are plenty of type families that are not typeclasses.
+-/
+#check List -- Type u → Type u
+#check List Nat -- Type
+#check Mul -- Type u → Type u
+#check Inhabited -- Type u → Type u
 
 /-!
 ## Implicit parameters
+
+A function parameter may be implicit. This means that it is inferred by Lean from the context. We can make a parameter implicit by enclosing it in curly braces `{}`.
+
+A typeclass parameter is always implicit.
+
+If we prefix a function application with `@`, then we must provide all implicit parameters explicitly. Conversely, we can use `_` for an explicit parameter to make it implicit.
 -/
