@@ -184,9 +184,40 @@ We used typeclasses above. We will discuss them later. For now, note that they a
 /-!
 ## Implicit parameters
 
-A function parameter may be implicit. This means that it is inferred by Lean from the context. We can make a parameter implicit by enclosing it in curly braces `{}`.
+A function parameter may be implicit. This means that it is inferred by Lean from *consistency of types*. We can make a parameter implicit by enclosing it in curly braces `{}`.
 
 A typeclass parameter is always implicit.
 
 If we prefix a function application with `@`, then we must provide all implicit parameters explicitly. Conversely, we can use `_` for an explicit parameter to make it implicit.
 -/
+def doubleList {α: Type} (l: List α) : List α := l ++ l
+
+/-!
+When calling the function `doubleList`, we give only one argument, the list `l`. The type `α` is inferred from the type of `l`.
+-/
+#eval doubleList [1, 2, 3] -- [1, 2, 3, 1, 2, 3]
+
+
+def doubleList' (α : Type) (l: List α ) : List α :=
+  l ++ l
+
+/-!
+When calling the function `doubleList'`, we must provide the type `α` explicitly.
+-/
+#eval doubleList' Nat [1, 2, 3] -- [1, 2, 3, 1, 2, 3]
+
+/-!
+When calling, we can make all parameters explicit or leave some explicit parameters to be deduced.
+-/
+#eval @doubleList Nat [1, 2, 3] -- [1, 2, 3, 1, 2, 3]
+
+#eval doubleList' _ [1, 2, 3] -- [1, 2, 3, 1, 2, 3]
+
+def doubleList''' := fun {α: Type} =>
+  fun (l: List α) => l ++ l
+
+-- set_option autoImplicit false in
+def doubleList''  (l: List α){α: Type}  := l ++ l
+#check doubleList''
+
+#eval doubleList' (l := [1, 2, 3]) (α := Nat) -- [1, 2, 3, 1, 2, 3]
