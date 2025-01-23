@@ -11,7 +11,7 @@ You have to make some recursive definitions and prove that they terminate.
 
 These are defined by the identities:
 
-* `fib 0 = 0`
+* `fib 0 = 1`
 * `fib 1 = 1`
 * `fib (n + 2) = fib (n + 1) + fib n`
 
