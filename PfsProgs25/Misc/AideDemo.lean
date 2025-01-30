@@ -1,7 +1,7 @@
 import Mathlib
 import LeanAideTools
 
-set_option leanaide.url  "http://10.134.10.33:7654"
+set_option leanaide.url  "http://10.134.13.102:7654"
 
 #theorem "There are infinitely many natural numbers"
 
