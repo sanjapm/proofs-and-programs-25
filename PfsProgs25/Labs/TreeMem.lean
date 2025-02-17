@@ -26,12 +26,12 @@ def BinTree.toList {α : Type} : BinTree α → List α
 
 The membership typeclass represents belonging to sets, lists and other collections. The notation `x ∈ y` makes sense if `x: α`, `y: β` and there is an instance of `Membership α β`
 
-1. Define an instance of Membership in `BinTree α` corresponding to being a label. You may want to define an auxiliary function (or inductive type) first.
+1. Define an instance of Membership in `BinTree α` corresponding to being a label. You may want to define an auxiliary function (or inductive type) first. (3 marks)
 -/
 instance {α: Type} : Membership α (BinTree α) := sorry
 
 /-!
-2. Prove that membership in a tree is equivalent to
+2. Prove that membership in a tree is equivalent to that in the corresponding list (3 marks).
 -/
 theorem mem_tree_iff_mem_list {α : Type} (tree : BinTree α ) :
   ∀ x: α, x ∈ tree ↔ x ∈ tree.toList := by sorry
@@ -52,7 +52,7 @@ Decidable.isTrue : {p : Prop} → p → Decidable p
 #print Decidable
 
 /-!
-3. Using that membership in a List of natural numbers is decidable (or in some other way), construct an instance of the following. Note that a convenient way to use a decidable property is with an `if` statement of the form `if c:property then ... else ...`.
+3. Using that membership in a List of natural numbers is decidable (or in some other way), construct an instance of the following. Note that a convenient way to use a decidable property is with an `if` statement of the form `if c:property then ... else ...`. (3 marks)
 -/
 instance {x: Nat}{t: BinTree Nat} : Decidable (x ∈ t) := sorry
 
