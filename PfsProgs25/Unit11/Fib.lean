@@ -11,25 +11,3 @@ We will also take a more complicated example: Catalan numbers. The Catalan numbe
 open Std
 #check HashMap
 #check StateM
-
-
-abbrev CatalanM (α : Type)  := StateM (HashMap Nat Nat) α
-
-def catalan (n : Nat): CatalanM Nat := do
-  let memo ← get
-  match memo.get? n with
-  | some v => return v
-  | none => do
-    let result ← match n with
-    | 0 => return 1
-    | n + 1 => do
-      let mut sum := 0
-      for c:i in [0:n+1] do
-        have := c.upper
-        sum := sum + (←catalan i) * (←catalan (n-i))
-      pure sum
-    modify (·.insert n result)
-    return result
-
-#eval catalan 100 |>.run' {}
-#check Std.Range
