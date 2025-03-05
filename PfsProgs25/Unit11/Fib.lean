@@ -112,7 +112,7 @@ namespace CatalanSimple
 abbrev CatState := HashMap Nat Nat
 abbrev CatM := StateM CatState
 
-partial def cat (n: Nat) : CatM Nat := do
+def cat (n: Nat) : CatM Nat := do
   match n with
   | 0 => return 1
   | k + 1 => do
@@ -121,7 +121,8 @@ partial def cat (n: Nat) : CatM Nat := do
     | some v => return v
     | none => do
       let mut sum := 0
-      for i in [0:k+1] do
+      for p:i in [0:k+1] do
+        have _ := p.upper
         let v1 ← cat i
         let v2 ← cat (k - i)
         sum := sum + v1 * v2
@@ -132,3 +133,45 @@ partial def cat (n: Nat) : CatM Nat := do
 #eval cat 100 |>.run' {}
 
 end CatalanSimple
+
+namespace CatalanOps
+
+structure CatState where
+  memo : HashMap Nat Nat := HashMap.empty
+  natOps : Nat := 0
+  count : Nat := 0
+deriving Inhabited
+
+instance : Repr CatState where
+  reprPrec s _ := "Memo size: " ++ repr s.memo.size ++ ", " ++ "Operations: " ++ repr s.natOps ++ ", " ++ "Loops: " ++ repr s.count
+
+abbrev CatM := StateM CatState
+
+def addOps (n: Nat := 1) : CatM Unit := do
+  modify (fun s => { s with natOps := s.natOps + n })
+
+def withCount {α} (x : CatM α) : CatM α := do
+  modify (fun s => { s with count := s.count + 1 })
+  x
+
+def cat (n: Nat) : CatM Nat := do
+  match n with
+  | 0 => return 1
+  | k + 1 => do
+    let m ← get
+    match m.memo.get? n with
+    | some v => return v
+    | none => withCount do
+      let mut sum := 0
+      for p:i in [0:k+1] do
+        have _ := p.upper
+        let v1 ← cat i
+        let v2 ← cat (k - i)
+        sum := sum + v1 * v2
+        addOps 2
+      modify (fun m => { m with memo := m.memo.insert n sum })
+      return sum
+
+#eval cat 100 |>.run {}
+
+end CatalanOps
