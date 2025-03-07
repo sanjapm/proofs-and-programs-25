@@ -25,7 +25,7 @@ def fib (n: Nat) : FibM Nat := do
     match m.get? n with -- check if we calculated it before
     | some v => return v
     | none => do
-      let v1 ← fib k
+      let v1 ← fib k -- calculate at k and update the state
       let v2 ← fib (k + 1)
       let v := v1 + v2
       modify (fun m => m.insert n v)
@@ -85,7 +85,7 @@ namespace Catalan
 abbrev CatState := HashMap Lean.Name <| HashMap Nat Nat
 abbrev CatM := StateM CatState
 
-partial def cat (n: Nat) : CatM Nat := do
+def cat (n: Nat) : CatM Nat := do
   match n with
   | 0 => return 1
   | k + 1 => do
@@ -95,7 +95,8 @@ partial def cat (n: Nat) : CatM Nat := do
     | some v => return v
     | none => do
       let mut sum := 0
-      for i in [0:k+1] do
+      for p:i in [0:k+1] do
+        have _ := p.upper
         let v1 ← cat i
         let v2 ← cat (k - i)
         sum := sum + v1 * v2
@@ -168,10 +169,50 @@ def cat (n: Nat) : CatM Nat := do
         let v1 ← cat i
         let v2 ← cat (k - i)
         sum := sum + v1 * v2
-        addOps 2
+        addOps 3
       modify (fun m => { m with memo := m.memo.insert n sum })
       return sum
 
 #eval cat 100 |>.run {}
 
 end CatalanOps
+
+structure  MyStateM (σ : Type) (α : Type) where
+  run : σ → α × σ
+
+namespace MyStateM
+
+def pure {σ α : Type} (a : α) : MyStateM σ α :=
+  {run := fun s => (a, s)}
+
+def bind {σ α β : Type} (x : MyStateM σ α)
+    (f : α → MyStateM σ β) : MyStateM σ β :=
+  ⟨fun s => -- initial state
+    let (a, s') := run x s -- value `a` and final state `s'`
+    run (f a) s'
+    ⟩
+
+instance : Monad (MyStateM σ) where
+  pure := pure
+  bind := bind
+
+def get {σ : Type} : MyStateM σ σ :=
+  ⟨fun s => (s, s)⟩
+
+def set {σ : Type} (s : σ) : MyStateM σ Unit :=
+  ⟨fun _ => ((), s)⟩
+
+def modify {σ : Type} (f : σ → σ) : MyStateM σ Unit :=
+  ⟨fun s => ((), f s)⟩
+
+def run' {σ α : Type} (x : MyStateM σ α) (s : σ) : α :=
+  let (a, _) := x.run s
+  a
+
+end MyStateM
+
+/-
+def StateT.{u, v} : Type u → (Type u → Type v) → Type u → Type (max u v) :=
+fun σ m α ↦ σ → m (α × σ)
+-/
+#print StateT
