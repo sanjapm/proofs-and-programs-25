@@ -143,3 +143,30 @@ elab "list_eg" : term => do
 #eval list_eg
 
 #check mkSort
+
+#check Prod
+
+def prodExpr? (e: Expr) :
+  MetaM <|Option (Expr × Expr) := do
+  let u ← mkFreshLevelMVar
+  let v ← mkFreshLevelMVar
+  let α  ← mkFreshExprMVar (mkSort <| Level.succ u)
+  let β  ← mkFreshExprMVar (mkSort <| Level.succ v)
+  let prod ← mkAppM ``Prod #[α, β]
+  if ← isDefEq e prod then
+    return some (α, β)
+  else
+    return none
+
+
+elab "#prodExpr" "[" e:term "]" : command =>
+  Command.liftTermElabM do
+  let e ← elabTerm e none
+  match ← prodExpr? e with
+  | some (α, β) =>
+    logInfo m!"{α} × {β}"
+    logInfo m!"{α} has type: {← inferType α}"
+    logInfo m!"{β} has type: {← inferType β}"
+  | none => logInfo "Not a PProd expression"
+
+#prodExpr [Nat × (Nat → Type)]
