@@ -132,8 +132,6 @@ We will experiment with universe meta-levels. We will create a list `[0]` as `Li
 
 elab "list_eg" : term => do
   let zero ← mkConst ``Nat.zero
-  let propExpr := mkSort Level.zero
-  let typeExpr := mkSort (Level.succ Level.zero)
   let lstNil ← mkAppOptM ``List.nil #[mkConst ``Nat]
   let e ← mkAppM ``List.cons #[zero, lstNil]
   return e
