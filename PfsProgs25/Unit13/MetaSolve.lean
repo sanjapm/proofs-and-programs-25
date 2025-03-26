@@ -142,6 +142,9 @@ elab "list_eg" : term => do
 
 #check mkSort
 
+/-
+⊢ Type u → Type v → Type (max u v)
+-/
 #check Prod
 
 def prodExpr? (e: Expr) :
