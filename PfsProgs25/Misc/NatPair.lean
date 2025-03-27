@@ -77,3 +77,5 @@ theorem smaller_le_larger (a b : Nat):
     else
       simp [h]
       exact Nat.le_of_not_gt h
+
+#check Quot.ind
