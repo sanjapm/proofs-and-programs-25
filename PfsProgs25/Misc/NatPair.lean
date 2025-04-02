@@ -70,7 +70,7 @@ theorem smaller_le_larger (a b : Nat):
     larger (NatPair.mk a b) :=
   by
     rw [NatPair.mk, smaller, larger]
-    simp
+    simp only
     if h:a < b then
       simp [h]
       exact Nat.le_of_lt h
@@ -79,3 +79,25 @@ theorem smaller_le_larger (a b : Nat):
       exact Nat.le_of_not_gt h
 
 #check Quot.ind
+
+def List.size (l : List α) : Nat :=
+  List.foldl (fun acc _ => acc + 1) 0 l
+
+#eval [1, 2, 3].size
+
+class inductive Algo where
+| smart | stupid
+
+def List.mySize {α} (l : List α)(algo: Algo := .smart) : Nat :=
+  match algo with
+  | .smart => List.size l
+  | .stupid =>
+     l.length
+
+#eval [1, 2, 3].mySize
+
+def List.myComplexSize {α} (l : List α)[algo: Algo] : Nat :=
+  l.mySize algo
+
+instance : Algo := .smart
+#eval [1, 2, 3].myComplexSize
