@@ -1,4 +1,23 @@
+/-
+⊢ {α : Sort u} → (α → α → Prop) → Sort u
+-/
 #check Quot
+
+/-
+Quotient.{u} {α : Sort u} (s : Setoid α) : Sort u
+-/
+#check Quotient
+
+/-
+class Setoid.{u} (α : Sort u) : Sort (max 1 u)
+number of parameters: 1
+fields:
+  Setoid.r : α → α → Prop
+  Setoid.iseqv : Equivalence Setoid.r
+constructor:
+  Setoid.mk.{u} {α : Sort u} (r : α → α → Prop) (iseqv : Equivalence r) : Setoid α
+-/
+#print Setoid
 
 abbrev NatPair := Quot (α := Nat × Nat)
     (fun (a, b) (c, d) => a = d && b = c)
