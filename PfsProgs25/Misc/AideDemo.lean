@@ -13,4 +13,4 @@ theorem eg₁ (n: Nat) : 2 ∣ n * (n + 1) := by
   -- #prove
   sorry
 
-#theorem "There are infinitely many odd integers."
+#theorem "There are infinitely many odd integers"
